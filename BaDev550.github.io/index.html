@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BaDev | Gameplay & Graphics Programmer</title>
+  <meta name="description" content="BaDev, gameplay and graphics programmer from Istanbul. Building the Tourqe C++ engine and games at Too Type Games.">
+  <meta name="theme-color" content="#0a0d12">
+  <meta property="og:title" content="BaDev | Gameplay & Graphics Programmer">
+  <meta property="og:description" content="Tourqe engine, Unreal Engine games and low-level graphics.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0d12'/%3E%3Cpath d='M14 18h36v8H36v22h-8V26H14z' fill='%23ffb347'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav" id="top">
+    <a class="brand" href="#top" aria-label="BaDev home"><span class="brand-mark">B</span><span>BaDev</span></a>
+    <nav aria-label="Primary">
+      <a href="#tourqe">Tourqe</a>
+      <a href="#work">Work</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero">
+      <canvas id="wire" aria-hidden="true"></canvas>
+      <div class="hero-inner">
+        <p class="eyebrow">Gameplay &amp; graphics programmer · <span id="loc">Istanbul</span></p>
+        <h1>I build game engines<br>and the games<br>that run on them<span class="cursor" aria-hidden="true">_</span></h1>
+        <p class="lead">
+          Creator of <strong>Tourqe</strong>, a custom C++ engine, and developer at
+          <strong id="studio">Too Type Games</strong>. I work across C++, Blueprints
+          and low-level graphics.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="#tourqe">Explore Tourqe</a>
+          <a class="btn" href="#work">See my games</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOURQE -->
+    <section id="tourqe" class="section">
+      <div class="head">
+        <p class="eyebrow">Featured · engine</p>
+        <h2>Tourqe</h2>
+        <p class="sub">
+          A custom C++ engine under the <code>Tourqe::Engine</code> namespace. It keeps the
+          world-context feel of Unreal, without a full editor: one level editor, everything
+          else written in the IDE.
+        </p>
+      </div>
+
+      <div class="arch">
+        <div class="arch-tabs" role="tablist" aria-label="Tourqe architecture layers">
+          <button role="tab" aria-selected="true" data-tab="reflection">1 · Reflection</button>
+          <button role="tab" aria-selected="false" data-tab="world">2 · World &amp; ECS</button>
+          <button role="tab" aria-selected="false" data-tab="render">3 · Rendering</button>
+          <button role="tab" aria-selected="false" data-tab="editor">4 · Level editor</button>
+        </div>
+
+        <div class="arch-flow" aria-hidden="true">
+          <span class="node" data-node="reflection">reflect_gen.py</span><i></i>
+          <span class="node" data-node="world">Scene + ECS</span><i></i>
+          <span class="node" data-node="render">Render graph</span><i></i>
+          <span class="node" data-node="editor">Level editor</span>
+        </div>
+
+        <div class="arch-panels">
+          <article class="panel" id="tab-reflection" role="tabpanel">
+            <h3>Automated reflection</h3>
+            <p>A Python generator, <code>reflect_gen.py</code>, reads <code>TCLASS()</code> and <code>GENERATE_CLASS</code> markers and writes a <code>ReflectManifest.h</code>. Types describe themselves, so editor and systems never hand-register anything.</p>
+            <ul>
+              <li><code>TObject</code> / <code>TActor</code> base classes</li>
+              <li><code>TCLASS()</code> and <code>TPROP()</code> markup</li>
+              <li>Generated manifest, no runtime parsing</li>
+            </ul>
+          </article>
+          <article class="panel" id="tab-world" role="tabpanel" hidden>
+            <h3>Scene, entities and components</h3>
+            <p><code>Scene</code> wraps an <code>EntityFactory</code> (generational handles, a 256-component signature bitset) and a <code>ComponentRegistry</code> of per-type storage, sparse-set style and keyed by <code>std::type_index</code>.</p>
+            <ul>
+              <li>Cache-friendly component storage</li>
+              <li><code>ForEach&lt;Ts...&gt;</code> iteration on <code>Scene</code></li>
+              <li><code>WorldSubsystem</code> owns the active scene; <code>System</code> classes run <code>OnUpdate(Scene&amp;)</code></li>
+            </ul>
+          </article>
+          <article class="panel" id="tab-render" role="tabpanel" hidden>
+            <h3>Render graph</h3>
+            <p><code>RenderSubsystem</code> only initialises the RHI. Scene drawing lives in <code>SceneRenderer2DSystem</code>, a world system that builds passes as <code>TCLASS</code> <code>RenderPass</code> subclasses, ordered with <code>Depends&lt;&gt;</code>.</p>
+            <ul>
+              <li>RHI init separated from scene rendering</li>
+              <li>Passes declare dependencies, the graph orders them</li>
+              <li>Built on my Vulkan renderer experience</li>
+            </ul>
+          </article>
+          <article class="panel" id="tab-editor" role="tabpanel" hidden>
+            <h3>Level editor only</h3>
+            <p>The editor is deliberately small. It creates entities through <code>WorldSubsystem</code>'s active scene, and all other tooling stays in code. That keeps the engine fast to iterate on and easy to reason about.</p>
+            <ul>
+              <li>Entities created via the active scene</li>
+              <li>Components exposed by reflection</li>
+              <li>No full editor to maintain</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+
+      <figure class="code">
+        <figcaption><span>Shape of the API · simplified sketch</span></figcaption>
+<pre><code><span class="c">// A reflected component</span>
+<span class="k">TCLASS</span>()
+<span class="k">struct</span> <span class="t">TransformComponent</span> : <span class="t">BaseComponent</span> {
+    <span class="k">GENERATE_CLASS</span>(TransformComponent)
+    <span class="k">TPROP</span>() Vec3 Position;
+};
+
+<span class="c">// A world system iterating components</span>
+<span class="k">void</span> MySystem::<span class="f">OnUpdate</span>(<span class="t">Scene</span>&amp; scene) {
+    scene.<span class="f">ForEach</span>&lt;TransformComponent&gt;(...);
+}</code></pre>
+      </figure>
+    </section>
+
+    <!-- WORK -->
+    <section id="work" class="section">
+      <div class="head">
+        <p class="eyebrow">Selected work</p>
+        <h2>Games &amp; projects</h2>
+        <div class="filters" role="group" aria-label="Filter projects">
+          <button class="chip active" data-filter="all">All</button>
+          <button class="chip" data-filter="game">Games</button>
+          <button class="chip" data-filter="engine">Engine &amp; graphics</button>
+          <button class="chip" data-filter="web">Web</button>
+        </div>
+      </div>
+      <div class="grid" id="projects"></div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section">
+      <div class="head">
+        <p class="eyebrow">Toolbox</p>
+        <h2>What I work with</h2>
+      </div>
+      <div class="skills" id="skill-groups"></div>
+      <p class="prior">Previously at <strong>Vortex Games Studio</strong>. Personal projects on Steam, itch.io and GitHub.</p>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section contact">
+      <div class="head">
+        <p class="eyebrow">Contact</p>
+        <h2>Let's make something</h2>
+        <p class="sub">The code lives on GitHub, and that's the best place to reach me.</p>
+      </div>
+      <div class="links" id="contact-links"></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>© <span id="year"></span> BaDev · Too Type Games</span>
+    <a href="#top">Back to top ↑</a>
+  </footer>
+
+  <script src="data/portfolio.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
